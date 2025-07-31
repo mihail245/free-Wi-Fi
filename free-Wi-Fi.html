@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталоги | Нет Wi-Fi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .catalog {
+            background-color: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .catalog img {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+        }
+        .user-info {
+            background-color: #ffebee;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Наши каталоги</h1>
+        <p>Нет Wi-Fi</p>
+    </header>
+
+    <div class="container">
+        <div class="catalog">
+            <h2>Каталог 1</h2>
+            <p>Описание первого каталога</p>
+            <img src="https://i.pinimg.com/564x/a2/36/20/a23620bbf4143ab4b90a462e59c25dad.jpg" alt="Изображение каталога 1">
+            <p>Нет Wi-Fi</p>
+        </div>
+
+        <div class="catalog">
+            <h2>Каталог 2</h2>
+            <p>Описание второго каталога</p>
+            <img src="https://i.pinimg.com/564x/a2/36/20/a23620bbf4143ab4b90a462e59c25dad.jpg" alt="Изображение каталога 2">
+            <p>Нет Wi-Fi</p>
+        </div>
+
+        <div class="catalog">
+            <h2>Каталог 3</h2>
+            <p>Описание третьего каталога</p>
+            <img src="https://i.pinimg.com/564x/a2/36/20/a23620bbf4143ab4b90a462e59c25dad.jpg" alt="Изображение каталога 3">
+            <p>Нет Wi-Fi</p>
+        </div>
+
+        <div class="user-info" id="userInfo">
+            <h3>Информация о посетителе:</h3>
+            <p>Загрузка данных...</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Нет Wi-Fi. Все права защищены.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Собираем информацию о пользователе
+            const userInfoDiv = document.getElementById('userInfo');
+            
+            // Основная информация
+            let html = '<h3>Информация о посетителе:</h3>';
+            html += '<p><strong>User Agent:</strong> ' + navigator.userAgent + '</p>';
+            html += '<p><strong>Платформа:</strong> ' + navigator.platform + '</p>';
+            html += '<p><strong>Язык:</strong> ' + navigator.language + '</p>';
+            html += '<p><strong>Онлайн:</strong> ' + (navigator.onLine ? 'Да' : 'Нет') + '</p>';
+            html += '<p><strong>Разрешение экрана:</strong> ' + screen.width + 'x' + screen.height + '</p>';
+            html += '<p><strong>Глубина цвета:</strong> ' + screen.colorDepth + ' бит</p>';
+            
+            // Попытка получить IP (через сторонний сервис)
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    html += '<p><strong>IP-адрес:</strong> ' + data.ip + '</p>';
+                    
+                    // Дополнительная информация о местоположении (если IP известен)
+                    return fetch(`https://ipapi.co/${data.ip}/json/`);
+                })
+                .then(response => response.json())
+                .then(locationData => {
+                    html += '<p><strong>Примерное местоположение:</strong> ' + 
+                           (locationData.city ? locationData.city + ', ' : '') + 
+                           (locationData.region ? locationData.region + ', ' : '') + 
+                           (locationData.country_name || 'Неизвестно') + '</p>';
+                    html += '<p><strong>Провайдер:</strong> ' + (locationData.org || 'Неизвестно') + '</p>';
+                    
+                    userInfoDiv.innerHTML = html;
+                })
+                .catch(error => {
+                    html += '<p><strong>IP-адрес:</strong> Не удалось определить</p>';
+                    userInfoDiv.innerHTML = html;
+                });
+            
+            // Проверка на мобильное устройство
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            html += '<p><strong>Мобильное устройство:</strong> ' + (isMobile ? 'Да' : 'Нет') + '</p>';
+            
+            // Информация о подключении (экспериментальная)
+            if (navigator.connection) {
+                html += '<p><strong>Тип подключения:</strong> ' + (navigator.connection.effectiveType || 'Неизвестно') + '</p>';
+                html += '<p><strong>Скорость подключения:</strong> ' + (navigator.connection.downlink ? navigator.connection.downlink + ' Мбит/с' : 'Неизвестно') + '</p>';
+            }
+            
+            userInfoDiv.innerHTML = html;
+        });
+    </script>
+</body>
+</html>
